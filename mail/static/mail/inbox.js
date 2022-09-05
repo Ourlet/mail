@@ -114,9 +114,12 @@ function display_email(email_id){
     .then(email => {
         // Print email
         console.log(email);
+        console.log(email.archived);
     
         // Create the container to show the email details
         const element = document.createElement('div');
+
+        if(email.archived == false){
 
         // Add some HTML in the container to display the information of a specific email
         element.innerHTML = `<div class="details-section">
@@ -141,13 +144,44 @@ function display_email(email_id){
     // Add the new HTML to the div email-details
     document.querySelector('#email-details').append(element);
 
-    // 
+    // Action to archive email
     const archive = document.querySelector('.archive-button')
     archive.addEventListener('click', function(){
       console.log('archive button clicked');
       archive_email(email.id);
     })
-  })
+    } else {
+      // Add some HTML in the container to display the information of a specific email
+      element.innerHTML = `<div class="details-section">
+      <div class="details"><span class="label-details">From: </span>${email.sender}</div>
+      <div class="details"><span class="label-details">To: </span>${email.recepients}</div>
+      <div class="details"><span class="label-details">Subject: </span>${email.subject}</div>
+      <div class="details"><span class="label-details">Timestamp: </span>${email.timestamp}</div>
+  </div>
+
+  <div class="action-buttons">
+      <div class="reply-button"><button class="btn btn-outline-primary">Reply</button></div>
+      <div class="archive-button"><button class="btn btn-outline-secondary" id="unarchive">Unarchive</button></div>
+  </div>
+  
+  <div class="body-section">
+      <div class="body">
+          <p>${email.body}</p>
+      </div>
+  </div>`
+
+  
+  // Add the new HTML to the div email-details
+  document.querySelector('#email-details').append(element);
+
+  // Action to archive email
+  const archive = document.querySelector('.archive-button')
+  archive.addEventListener('click', function(){
+    console.log('archive button clicked');
+    unarchive_email(email.id);
+      
+    })
+  }})
 }
 
 function read_email(email_id){
@@ -170,6 +204,22 @@ function archive_email(email_id){
   })
   .then(result => {
     load_mailbox('archive');
+    console.log(result);
+  });
+  return false;
+}
+
+function unarchive_email(email_id){
+  // Unarchive an email 
+   console.log('archive');
+  fetch(`/emails/${email_id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        archived: false
+    })
+  })
+  .then(result => {
+    load_mailbox('inbox');
     console.log(result);
   });
   return false;
