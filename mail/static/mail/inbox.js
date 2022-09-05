@@ -174,6 +174,3 @@ function archive_email(email_id){
   });
   return false;
 }
-
-
-https://www.edreams.ch/travel/secure/?landingPageType=PASSENGER&locale=fr_CH&mktportal=kayak-flex&searchId=159415618436&searchMainProductTypeName=FLIGHT&testToken=20%23133603742043-6%2340736-12%2339739396680-5%23133534595597-22%23133628282684-19%23132753246031-13%2339739410226-18%2374177641791-7%2379846-8%23143399588788-2%23133567291254-15%23143385544855-16%23133623036599-10%23126056696621-1%2325751839532-17%23143385544861-9%23133698516031-3%23133580107943-21%23133657971882-14%23143432531467-11%23130120611667-4%23144797053552&testTokenDate=2022-08-09T09%3A02%3A20&utm_campaign=GVA-BRU&utm_content=meta-ch&utm_medium=metasearch&utm_source=kayak-flex&utm_term=flight&fareItineraryKey=0,TF&segmentKey0=1,LX2809,LX780&segmentKey1=1,LX791&utm_content=sl7zPE3zkInGT3CuuBphJQ&utm_source=momondo-flex#mytripslogin/
