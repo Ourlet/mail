@@ -1,0 +1,53 @@
+textarea {
+    min-height: 400px;
+}
+
+.emailbox {
+    display: flex;
+    border: 1px solid black;
+    padding: 5px;
+    gap:10 px;
+}
+
+.email-sender{
+    width: 20%;
+    font-weight: 500 ;
+}
+
+.email-subject {
+    width: 55%;
+    text-align: left;
+}
+
+.email-timestamp {
+    width: 25%;
+    color : gray;
+    text-align: right;
+}
+
+.email-read {
+    background-color: #fafafa;
+    color : grey;
+}
+
+.details-section {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+}
+
+.label-details {
+    font-weight: 500;
+}
+
+.action-buttons {
+    display: inline-flex;
+    gap: 20px;
+    padding-bottom: 20px;
+}
+
+.body-section {
+    border-top: 1px solid rgba(0,0,0,.1);
+    padding-top: 20px;
+}
+
