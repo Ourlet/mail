@@ -33,6 +33,7 @@ function send_email(){
   const formSubject = document.querySelector('#compose-subject').value;
   const formBody = document.querySelector('#compose-body').value;
   console.log(formRecipients, formSubject, formBody);
+  console.info(formRecipients);
   
   // Send the data to the API to generate an email
   fetch('/emails', {
@@ -112,19 +113,18 @@ function display_email(email_id){
     fetch(`/emails/${email_id}`)
     .then(response => response.json())
     .then(email => {
-        // Print email
-        console.log(email);
-        console.log(email.archived);
-    
         // Create the container to show the email details
         const element = document.createElement('div');
+        const recipients = email.recipients.join(', ');
+        console.log(recipients);
+        console.log(email.recipients)
 
         if(email.archived == false){
 
         // Add some HTML in the container to display the information of a specific email
         element.innerHTML = `<div class="details-section">
         <div class="details"><span class="label-details">From: </span>${email.sender}</div>
-        <div class="details"><span class="label-details">To: </span>${email.recepients}</div>
+        <div class="details"><span class="label-details">To: </span>${recipients}</div>
         <div class="details"><span class="label-details">Subject: </span>${email.subject}</div>
         <div class="details"><span class="label-details">Timestamp: </span>${email.timestamp}</div>
     </div>
@@ -143,6 +143,13 @@ function display_email(email_id){
     
     // Add the new HTML to the div email-details
     document.querySelector('#email-details').append(element);
+
+    // Action to reply to an email
+    const reply = document.querySelector('.reply-button')
+    reply.addEventListener('click', function(){
+      console.log('reply button clicked');
+      reply_email(email_id);
+    })
 
     // Action to archive email
     const archive = document.querySelector('.archive-button')
@@ -211,7 +218,7 @@ function archive_email(email_id){
 
 function unarchive_email(email_id){
   // Unarchive an email 
-   console.log('archive');
+  console.log('archive');
   fetch(`/emails/${email_id}`, {
     method: 'PUT',
     body: JSON.stringify({
@@ -223,4 +230,20 @@ function unarchive_email(email_id){
     console.log(result);
   });
   return false;
+}
+
+function reply_email(email_id){
+  fetch(`/emails/${email_id}`)
+    .then(response => response.json())
+    .then(email =>{
+  compose_email()
+  document.querySelector('#compose-recipients').value = email.sender;
+  if (email.subject.slice(0, 3) === 'Re:'){
+    document.querySelector('#compose-subject').value = email.subject;
+  } else {
+    document.querySelector('#compose-subject').value = 'Re: ' + email.subject;
+  }
+  document.querySelector('#compose-body').value = 'On ' + email.timestamp + ' ' + email.sender + ' wrote: ' + email.body;
+  console.log(email)
+})
 }
