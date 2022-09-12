@@ -43,13 +43,13 @@ function send_email(){
         subject: formSubject,
         body: formBody
     })
-})
-.then(response => response.json())
-.then(result => {
-        load_mailbox('sent');
-        console.log(result);
-    });
-return false;
+  })
+  .then(response => response.json())
+  .then(result => {
+          load_mailbox('sent');
+          console.log(result);
+      });
+  return false;
 }
 
 function load_mailbox(mailbox) {
@@ -67,8 +67,6 @@ function load_mailbox(mailbox) {
   fetch(`/emails/${mailbox}`)
   .then(response => response.json())
   .then(emails => {
-    // Print emails
-    console.log(emails);
 
     // Call a function for each email of the mailbox
     emails.forEach(function(email){
@@ -93,12 +91,11 @@ function load_mailbox(mailbox) {
 
     // Listen for a click on a specific email
     element.addEventListener('click', function() {
-      console.log(`This email ${email.id} has been clicked!`)
-      console.log(`${email.id}`);
+      // Display the email details
       display_email(email.id);
+      // Change the status to "Read"
       read_email(email.id);
     });
-
   });
 })}
 
@@ -116,10 +113,6 @@ function display_email(email_id){
         // Create the container to show the email details
         const element = document.createElement('div');
         const recipients = email.recipients.join(', ');
-        console.log(recipients);
-        console.log(email.recipients)
-
-        if(email.archived == false){
 
         // Add some HTML in the container to display the information of a specific email
         element.innerHTML = `<div class="details-section">
@@ -139,7 +132,6 @@ function display_email(email_id){
             <p>${email.body}</p>
         </div>
     </div>`
-
     
     // Add the new HTML to the div email-details
     document.querySelector('#email-details').append(element);
@@ -151,47 +143,28 @@ function display_email(email_id){
       reply_email(email_id);
     })
 
-    // Action to archive email
+    // Check if email is actually archived
+    if(email.archived == false){
+
+    // If not archived, Action to archive email
     const archive = document.querySelector('.archive-button')
+    archive.innerHTML=`<div class="archive-button"><button class="btn btn-outline-secondary" id="archive">Archive</button></div>`
     archive.addEventListener('click', function(){
-      console.log('archive button clicked');
       archive_email(email.id);
     })
+
+    // If archived, Action to unarchive email
     } else {
-      // Add some HTML in the container to display the information of a specific email
-      element.innerHTML = `<div class="details-section">
-      <div class="details"><span class="label-details">From: </span>${email.sender}</div>
-      <div class="details"><span class="label-details">To: </span>${email.recepients}</div>
-      <div class="details"><span class="label-details">Subject: </span>${email.subject}</div>
-      <div class="details"><span class="label-details">Timestamp: </span>${email.timestamp}</div>
-  </div>
-
-  <div class="action-buttons">
-      <div class="reply-button"><button class="btn btn-outline-primary">Reply</button></div>
-      <div class="archive-button"><button class="btn btn-outline-secondary" id="unarchive">Unarchive</button></div>
-  </div>
-  
-  <div class="body-section">
-      <div class="body">
-          <p>${email.body}</p>
-      </div>
-  </div>`
-
-  
-  // Add the new HTML to the div email-details
-  document.querySelector('#email-details').append(element);
-
-  // Action to archive email
-  const archive = document.querySelector('.archive-button')
-  archive.addEventListener('click', function(){
-    console.log('archive button clicked');
-    unarchive_email(email.id);
-      
+    const archive = document.querySelector('.archive-button')
+    archive.innerHTML=`<div class="archive-button"><button class="btn btn-outline-secondary" id="archive">Unarchive</button></div>`
+    archive.addEventListener('click', function(){
+      unarchive_email(email.id);
     })
   }})
 }
 
 function read_email(email_id){
+  // Change the status to Read = true
   fetch(`/emails/${email_id}`, {
     method: 'PUT',
     body: JSON.stringify({
@@ -201,8 +174,7 @@ function read_email(email_id){
 }
 
 function archive_email(email_id){
-  // Archive an email 
-   console.log('archive');
+  // Archive an email by changing status Archive = True
   fetch(`/emails/${email_id}`, {
     method: 'PUT',
     body: JSON.stringify({
@@ -210,15 +182,14 @@ function archive_email(email_id){
     })
   })
   .then(result => {
+    // Then load the Archive Mailbox
     load_mailbox('archive');
-    console.log(result);
   });
   return false;
 }
 
 function unarchive_email(email_id){
-  // Unarchive an email 
-  console.log('archive');
+  // Unarchive an email by changing status Archive = False
   fetch(`/emails/${email_id}`, {
     method: 'PUT',
     body: JSON.stringify({
@@ -226,24 +197,30 @@ function unarchive_email(email_id){
     })
   })
   .then(result => {
+    // Then load the Inbox Mailbox
     load_mailbox('inbox');
-    console.log(result);
   });
   return false;
 }
 
 function reply_email(email_id){
+  // Retrieve details of a specific email
   fetch(`/emails/${email_id}`)
     .then(response => response.json())
     .then(email =>{
-  compose_email()
-  document.querySelector('#compose-recipients').value = email.sender;
-  if (email.subject.slice(0, 3) === 'Re:'){
-    document.querySelector('#compose-subject').value = email.subject;
-  } else {
-    document.querySelector('#compose-subject').value = 'Re: ' + email.subject;
-  }
-  document.querySelector('#compose-body').value = 'On ' + email.timestamp + ' ' + email.sender + ' wrote: ' + email.body;
-  console.log(email)
-})
+  
+      // Load the form
+      compose_email()
+
+      // Then prepopulate the fields with the data retrieved
+      document.querySelector('#compose-recipients').value = email.sender;
+
+      // Check if first reply
+      if (email.subject.slice(0, 3) === 'Re:'){
+        document.querySelector('#compose-subject').value = email.subject;
+      } else {
+        document.querySelector('#compose-subject').value = 'Re: ' + email.subject;
+      }
+      document.querySelector('#compose-body').value = 'On ' + email.timestamp + ' ' + email.sender + ' wrote: ' + email.body;
+    })
 }
